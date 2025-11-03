@@ -16,6 +16,8 @@ interface NavbarProps {
   onBackPress?: () => void;
   onNotificationPress?: () => void;
   onProfilePress?: () => void;
+  showEditButton?: boolean;
+  onEditPress?: () => void;
 }
 
 const Navbar: React.FC<NavbarProps> = ({
@@ -26,6 +28,8 @@ const Navbar: React.FC<NavbarProps> = ({
   onBackPress,
   onNotificationPress,
   onProfilePress,
+  showEditButton = false,
+  onEditPress,
 }) => {
   return (
     <View style={styles.container}>
@@ -64,6 +68,13 @@ const Navbar: React.FC<NavbarProps> = ({
           <View style={styles.titleContainer}>
             <Text style={styles.title}>{title}</Text>
           </View>
+        )}
+
+        {/* Optional Edit Button aligned to the right */}
+        {showEditButton && (
+          <TouchableOpacity style={styles.editButton} onPress={onEditPress}>
+            <Icon name="edit" size={22} color="#000" />
+          </TouchableOpacity>
         )}
       </View>
     </View>
@@ -133,6 +144,16 @@ const styles = StyleSheet.create({
     height: 40,
     borderRadius: 20,
     backgroundColor: '#FFF',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  editButton: {
+    position: 'absolute',
+    right: 0,
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: 'transparent',
     justifyContent: 'center',
     alignItems: 'center',
   },

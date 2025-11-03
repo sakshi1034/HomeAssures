@@ -59,7 +59,7 @@ const AddProjectScreen: React.FC = () => {
       numberOfPhases,
     });
     // Navigate to Add Phase Details screen
-    navigation.navigate('AddPhaseDetails');
+    navigation.navigate('AddPhaseDetails' as never);
   };
 
   return (
@@ -206,7 +206,7 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    paddingHorizontal: 24,
+    paddingHorizontal: 12,
   },
   progressCard: {
     backgroundColor: '#FFFFFF',

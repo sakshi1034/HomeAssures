@@ -118,7 +118,11 @@ const AddPhaseDetailsScreen: React.FC = () => {
     console.log('Add Project pressed');
     console.log('Phases Data:', phases);
     // Handle project creation logic
-    navigation.navigate('Home');
+    navigation.navigate('AllProjects', { projects: [
+      { id: 1, projectName: 'Sai Nagari' },
+      { id: 2, projectName: 'Green Valley' },
+      { id: 3, projectName: 'Blue Heights' },
+    ] });
   };
 
   return (
@@ -214,7 +218,7 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    paddingHorizontal: 24,
+    paddingHorizontal: 12,
   },
   header: {
     backgroundColor: '#FFFFFF',

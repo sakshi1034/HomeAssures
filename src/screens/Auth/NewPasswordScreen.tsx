@@ -13,10 +13,10 @@ import { useNavigation } from '@react-navigation/native';
 import { Input } from 'react-native-elements';
 import { Logo, VectorIcon } from '../../components';
 import { getFontStyle } from '../../utils/fonts';
-import type { AuthStackParamList } from '../../navigation/AuthStack';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import type { RootStackParamList } from '../../navigation/AppNavigator';
 
-type NewPasswordScreenNavigationProp = NativeStackNavigationProp<AuthStackParamList, 'NewPassword'>;
+type NewPasswordScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'NewPassword'>;
 
 const NewPasswordScreen: React.FC = () => {
   const [newPassword, setNewPassword] = useState('');
@@ -29,8 +29,8 @@ const NewPasswordScreen: React.FC = () => {
     if (newPassword && confirmPassword) {
       if (newPassword === confirmPassword) {
         console.log('Password reset successful');
-        // Navigate back to login or show success message
-        navigation.navigate('Login');
+        // Navigate to main app with bottom tabs
+        navigation.navigate('MainApp');
       } else {
         console.log('Passwords do not match');
       }

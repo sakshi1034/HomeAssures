@@ -28,8 +28,8 @@ const LoginScreen: React.FC = () => {
   const handleLogin = () => {
     // Handle login logic here
     console.log('Login pressed', { email, password });
-    // Static login - directly navigate to home screen
-    navigation.navigate('Home');
+    // Static login - directly navigate to main app with bottom tabs
+    navigation.navigate('MainApp');
   };
 
   const handleGoogleLogin = () => {

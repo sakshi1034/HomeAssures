@@ -2,9 +2,6 @@ import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { LoginScreen, SignUpScreen, ForgotPasswordScreen, OTPScreen, NewPasswordScreen } from '../screens/Auth';
-import { AddTeamScreen } from '../screens/Team';
-import { ProcessRefundScreen } from '../screens/Refund';
-import { AddProjectScreen, AddPhaseDetailsScreen } from '../screens/Projects';
 import BottomTabNavigator from './BottomTabNavigator';
 
 export type RootStackParamList = {
@@ -13,11 +10,7 @@ export type RootStackParamList = {
   ForgotPassword: undefined;
   OTP: undefined;
   NewPassword: undefined;
-  Home: undefined;
-  AddTeam: undefined;
-  ProcessRefund: undefined;
-  AddProject: undefined;
-  AddPhaseDetails: undefined;
+  MainApp: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -38,12 +31,8 @@ const AppNavigator: React.FC = () => {
         <Stack.Screen name="OTP" component={OTPScreen} />
         <Stack.Screen name="NewPassword" component={NewPasswordScreen} />
         
-        {/* Main App Screens */}
-        <Stack.Screen name="Home" component={BottomTabNavigator} />
-        <Stack.Screen name="AddTeam" component={AddTeamScreen} />
-        <Stack.Screen name="ProcessRefund" component={ProcessRefundScreen} />
-        <Stack.Screen name="AddProject" component={AddProjectScreen} />
-        <Stack.Screen name="AddPhaseDetails" component={AddPhaseDetailsScreen} />
+        {/* Main App with Bottom Tabs */}
+        <Stack.Screen name="MainApp" component={BottomTabNavigator} />
       </Stack.Navigator>
     </NavigationContainer>
   );

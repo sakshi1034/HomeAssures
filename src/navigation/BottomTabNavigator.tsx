@@ -1,16 +1,18 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { VectorIcon } from '../components';
-import { HomeScreen } from '../screens/Home';
-import { TeamScreen } from '../screens/Team';
-import { ProjectsScreen } from '../screens/Projects';
-import { ReportsScreen } from '../screens/Reports';
+import HomeStack from './HomeStack';
+import TeamStack from './TeamStack';
+import InventoryStack from './InventoryStack';
+import ReportsStack from './ReportsStack';
+// import ProfileStack from './ProfileStack';
 
 export type BottomTabParamList = {
   Home: undefined;
-  Team: undefined;
-  Projects: undefined;
+  Clients: undefined;
+  Inventory: undefined;
   Reports: undefined;
+  Profile: undefined;
 };
 
 const Tab = createBottomTabNavigator<BottomTabParamList>();
@@ -28,17 +30,21 @@ const getTabBarIcon = ({ route, focused, color, size }: {
     case 'Home':
       iconName = focused ? 'home' : 'home';
       break;
-    case 'Team':
+    case 'Clients':
       iconName = focused ? 'people' : 'people-outline';
       iconType = 'Ionicons';
       break;
-    case 'Projects':
-      iconName = focused ? 'domain' : 'domain';
+    case 'Inventory':
+      iconName = focused ? 'inventory' : 'inventory-2';
       break;
     case 'Reports':
       iconName = focused ? 'bar-chart' : 'bar-chart-outline';
       iconType = 'Ionicons';
       break;
+    // case 'Profile':
+    //   iconName = focused ? 'person' : 'person-outline';
+    //   iconType = 'Ionicons';
+    //   break;
     default:
       iconName = 'home';
   }
@@ -89,32 +95,39 @@ const BottomTabNavigator: React.FC = () => {
     >
       <Tab.Screen 
         name="Home" 
-        component={HomeScreen}
+        component={HomeStack}
         options={{
           tabBarLabel: 'Home',
         }}
       />
       <Tab.Screen 
-        name="Team" 
-        component={TeamScreen}
+        name="Clients" 
+        component={TeamStack}
         options={{
-          tabBarLabel: 'Team',
+          tabBarLabel: 'Clients',
         }}
       />
       <Tab.Screen 
-        name="Projects" 
-        component={ProjectsScreen}
+        name="Inventory" 
+        component={InventoryStack}
         options={{
-          tabBarLabel: 'Projects',
+          tabBarLabel: 'Inventory',
         }}
       />
       <Tab.Screen 
         name="Reports" 
-        component={ReportsScreen}
+        component={ReportsStack}
         options={{
           tabBarLabel: 'Reports',
         }}
       />
+      {/* <Tab.Screen 
+        name="Profile" 
+        component={ProfileStack}
+        options={{
+          tabBarLabel: 'Profile',
+        }}
+      /> */}
     </Tab.Navigator>
   );
 };

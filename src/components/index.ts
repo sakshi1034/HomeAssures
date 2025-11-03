@@ -5,3 +5,5 @@ export { default as AppGradient } from './AppGradient';
 export { default as Navbar } from './Navbar';
 export { default as Checkbox } from './Checkbox';
 export { default as Dropdown } from './Dropdown';
+export { default as FilterModal } from './FilterModal';
+export { default as UnitFilterModal } from './UnitFilterModal';

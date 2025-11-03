@@ -63,7 +63,6 @@ const HomeScreen: React.FC = () => {
     { title: 'Add\nTeam', icon: 'diversity-3', iconType: 'MaterialIcons' },
     { title: 'Process\nRefund', icon: 'currency-exchange', iconType: 'MaterialIcons' },
     { title: 'Agreement\nStatus', icon: 'description', iconType: 'MaterialIcons' },
-    { title: 'Lead\nManagement', icon: 'person-add', iconType: 'MaterialIcons' },
   ];
 
   const chartData = [
@@ -80,11 +79,13 @@ const HomeScreen: React.FC = () => {
 
   const handleMenuItemPress = (title: string) => {
     if (title.includes('Add\nTeam')) {
-      navigation.navigate('AddTeam');
+      navigation.navigate('AddTeam' as never);
     } else if (title.includes('Process\nRefund')) {
-      navigation.navigate('ProcessRefund');
+      navigation.navigate('ProcessRefund' as never);
     } else if (title.includes('Add\nProject')) {
-      navigation.navigate('AddProject');
+      navigation.navigate('AddProject' as never);
+    } else if (title.includes('Agreement')) {
+      navigation.navigate('AgreementStatus' as never);
     } else {
       console.log('Menu item pressed:', title);
     }
@@ -117,12 +118,13 @@ const HomeScreen: React.FC = () => {
           </View>
 
           {/* Project Cards - Horizontal Scroll */}
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.projectScrollContainer}
-            style={styles.projectScrollView}
-          >
+          <View style={{ position: 'relative' }}>
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={styles.projectScrollContainer}
+              style={styles.projectScrollView}
+            >
             {projectsData.map((project) => (
               <View key={project.id} style={styles.projectCard}>
                 <LinearGradient
@@ -159,7 +161,7 @@ const HomeScreen: React.FC = () => {
                     </View>
                   </View>
 
-                  <TouchableOpacity style={styles.viewButton}>
+                  <TouchableOpacity style={styles.viewButton} onPress={() => navigation.navigate('ProjectDetails', { project })}>
                     <Text style={styles.viewButtonText}>View</Text>
                     <VectorIcon
                       type="MaterialIcons"
@@ -171,15 +173,18 @@ const HomeScreen: React.FC = () => {
                 </LinearGradient>
               </View>
             ))}
-          </ScrollView>
+            </ScrollView>
+            <TouchableOpacity
+              style={styles.carouselArrow}
+              onPress={() => navigation.navigate('AllProjects', { projects: projectsData })}
+              activeOpacity={0.8}
+            >
+              <VectorIcon type="MaterialIcons" name="chevron-right" size={28} color="#111827" />
+            </TouchableOpacity>
+          </View>
 
           {/* Menu Items - Horizontal Scroll */}
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.menuScrollContainer}
-            style={styles.menuScrollView}
-          >
+            <View style={styles.menuContainer}>
              {menuItems.map((item, index) => (
                <TouchableOpacity 
                  key={index} 
@@ -197,17 +202,16 @@ const HomeScreen: React.FC = () => {
                  <Text style={styles.menuText}>{item.title}</Text>
                </TouchableOpacity>
              ))}
-          </ScrollView>
-
-          {/* Target Allocation */}
-          <TouchableOpacity style={styles.targetAllocationButton}>
+            </View>
+          {/* Manage Targets */}
+          <TouchableOpacity style={styles.targetAllocationButton} onPress={() => navigation.navigate('ManageTargets')}>
             <VectorIcon
               type="MaterialIcons"
               name="track-changes"
               size={24}
               color="#FFFFFF"
             />
-            <Text style={styles.targetAllocationText}>Target Allocation</Text>
+            <Text style={styles.targetAllocationText}>Manage Targets</Text>
             <VectorIcon
               type="MaterialIcons"
               name="chevron-right"
@@ -220,7 +224,7 @@ const HomeScreen: React.FC = () => {
           <View style={styles.reportsSection}>
             <View style={styles.reportsHeader}>
               <Text style={styles.reportsTitle}>Reports</Text>
-              <TouchableOpacity>
+              <TouchableOpacity onPress={() => navigation.navigate('SalesReport' as never)}>
                 <Text style={styles.viewMoreText}>View More</Text>
               </TouchableOpacity>
             </View>
@@ -269,7 +273,7 @@ const styles = StyleSheet.create({
   },
   statsContainer: {
     flexDirection: 'row',
-    paddingHorizontal: 24,
+    paddingHorizontal: 12,
     marginBottom: 20,
     gap: 16,
   },
@@ -300,7 +304,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   projectScrollContainer: {
-    paddingHorizontal: 24,
+    paddingHorizontal: 12,
     gap: 16,
   },
   projectCard: {
@@ -387,12 +391,11 @@ const styles = StyleSheet.create({
     marginRight: 4,
     ...getFontStyle('medium'),
   },
-  menuScrollView: {
+  menuContainer: {
+    flexDirection: 'row',
+    gap: 8,
+    paddingHorizontal: 12,
     marginBottom: 20,
-  },
-  menuScrollContainer: {
-    paddingHorizontal: 24,
-    gap: 20,
   },
   menuItem: {
     alignItems: 'center',
@@ -439,7 +442,7 @@ const styles = StyleSheet.create({
   reportsSection: {
     backgroundColor: '#FFFFFF',
     paddingTop: 20,
-    paddingHorizontal: 24,
+    paddingHorizontal: 12,
     marginTop: 20,
   },
   reportsHeader: {
@@ -519,6 +522,22 @@ const styles = StyleSheet.create({
   },
   bottomSpacing: {
     height: 100,
+  },
+  carouselArrow: {
+    position: 'absolute',
+    right: 8,
+    top: '40%',
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#FFFFFF',
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
+    elevation: 3,
   },
 });
 
