@@ -103,7 +103,7 @@ const ProcessRefundScreen: React.FC = () => {
         <Navbar
           showBackButton={true}
           showProfile={true}
-          userName="Kiran"
+          userName="Prakash"
           title="Process Refund"
           onBackPress={handleBackPress}
           onNotificationPress={handleNotificationPress}

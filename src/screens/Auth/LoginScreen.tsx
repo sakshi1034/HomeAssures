@@ -14,6 +14,7 @@ import { useNavigation } from '@react-navigation/native';
 import { Input } from 'react-native-elements';
 import { Logo, VectorIcon } from '../../components';
 import { getFontStyle } from '../../utils/fonts';
+import { useUser } from '../../context/UserContext';
 import type { RootStackParamList } from '../../navigation/AppNavigator';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
@@ -24,12 +25,29 @@ const LoginScreen: React.FC = () => {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const navigation = useNavigation<LoginScreenNavigationProp>();
+  const { setRole, setUserName } = useUser();
 
   const handleLogin = () => {
     // Handle login logic here
     console.log('Login pressed', { email, password });
-    // Static login - directly navigate to main app with bottom tabs
-    navigation.navigate('MainApp');
+    
+    // Static role-based login
+    if (email.toLowerCase() === 'admin@gmail.com' && password === 'admin') {
+      // Admin login - set role and navigate to main app
+      setRole('admin');
+      setUserName('Admin');
+      navigation.navigate('MainApp');
+    } else if (email.toLowerCase() === 'rm@gmail.com' && password === 'rm') {
+      // RM login - set role and navigate to main app (which will show RM tabs)
+      setRole('rm');
+      setUserName('Prakash');
+      navigation.navigate('MainApp');
+    } else {
+      // Default login - navigate to main app (for other users)
+      setRole('admin');
+      setUserName('User');
+      navigation.navigate('MainApp');
+    }
   };
 
   const handleGoogleLogin = () => {

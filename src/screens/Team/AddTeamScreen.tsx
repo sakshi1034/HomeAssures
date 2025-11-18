@@ -72,7 +72,7 @@ const AddTeamScreen: React.FC = () => {
         <Navbar
           showBackButton={true}
           showProfile={true}
-          // userName="Kiran"
+          // userName="User"
           title="Add Team"
           onBackPress={handleBackPress}
           onNotificationPress={handleNotificationPress}

@@ -3,6 +3,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { LoginScreen, SignUpScreen, ForgotPasswordScreen, OTPScreen, NewPasswordScreen } from '../screens/Auth';
 import BottomTabNavigator from './BottomTabNavigator';
+import RMHomeScreen from '../screens/rm/RMHomeScreen';
 
 export type RootStackParamList = {
   Login: undefined;
@@ -11,6 +12,7 @@ export type RootStackParamList = {
   OTP: undefined;
   NewPassword: undefined;
   MainApp: undefined;
+  RMHome: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -33,6 +35,9 @@ const AppNavigator: React.FC = () => {
         
         {/* Main App with Bottom Tabs */}
         <Stack.Screen name="MainApp" component={BottomTabNavigator} />
+        
+        {/* RM Home Screen */}
+        <Stack.Screen name="RMHome" component={RMHomeScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
