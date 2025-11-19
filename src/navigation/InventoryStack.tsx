@@ -4,6 +4,8 @@ import { createStackNavigator } from '@react-navigation/stack';
 import InventoryScreen from '../screens/Inventory/InventoryScreen';
 import ProjectDetailsScreen from '../screens/Inventory/ProjectDetailsScreen';
 import UnitInventoryScreen from '../screens/Inventory/UnitInventoryScreen';
+import UnitDetailsScreen from '../screens/Inventory/UnitDetailsScreen';
+
 
 export type InventoryStackParamList = {
   InventoryHome: undefined;
@@ -24,6 +26,19 @@ export type InventoryStackParamList = {
     projectName: string;
     selectedUnitType: string;
     possessionDate: string;
+  };
+UnitDetails: {
+    unitId: string;
+    buildingName: string;
+    phaseTower: string;
+    unitType: string;
+    carpetArea: string;
+    builtUpArea: string;
+    facing: string;
+    price: number;
+    floor: number | string;
+    unitNumber: string | number;
+    status: string | number;
   };
 };
 
@@ -47,6 +62,10 @@ const InventoryStack: React.FC = () => {
       <Stack.Screen 
         name="UnitInventory" 
         component={UnitInventoryScreen}
+      />
+      <Stack.Screen 
+        name="UnitDetails" 
+        component={UnitDetailsScreen}
       />
     </Stack.Navigator>
   );

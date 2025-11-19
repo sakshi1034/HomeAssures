@@ -39,10 +39,10 @@ interface Building {
 const UnitInventoryScreen: React.FC = () => {
   const navigation = useNavigation<UnitInventoryScreenNavigationProp>();
   const route = useRoute<UnitInventoryScreenRouteProp>();
-  const { projectName, selectedUnitType, possessionDate } = route.params;
+  const { projectName, selectedUnitType } = route.params;
 
   const [selectedBuilding, setSelectedBuilding] = useState(0);
-  const [selectedPhase, setSelectedPhase] = useState('Phase 1 - 360');
+  const [selectedPhase] = useState('Phase 1 - 360');
 
   // Mock data for buildings and units
   const buildings: Building[] = [
@@ -66,7 +66,7 @@ const UnitInventoryScreen: React.FC = () => {
     }
   ];
 
-  const phases = ['Phase 1 - 360', 'Phase 2 - 240', 'Phase 3 - 180'];
+  // const phases = ['Phase 1 - 360', 'Phase 2 - 240', 'Phase 3 - 180'];
 
   const handleBackPress = () => {
     navigation.goBack();
@@ -93,22 +93,7 @@ const UnitInventoryScreen: React.FC = () => {
     }
   };
 
-  const getStatusLabel = (status: UnitStatus) => {
-    switch (status) {
-      case 'available':
-        return 'Available';
-      case 'sold':
-        return 'Sold';
-      case 'interested':
-        return 'Interested';
-      case 'bestSeller':
-        return 'Best Seller';
-      case 'selected':
-        return 'Selected';
-      default:
-        return 'Available';
-    }
-  };
+
 
   const currentBuilding = buildings[selectedBuilding];
 
@@ -196,11 +181,27 @@ const UnitInventoryScreen: React.FC = () => {
                       {floorIndex === 0 ? 'P' : floorIndex.toString()}
                     </Text>
                     <View style={styles.unitsRow}>
-                      {floor.map((unit, unitIndex) => (
+                      {floor.map((unit) => (
                         <TouchableOpacity
                           key={unit.id}
                           style={[styles.unit, getUnitStyle(unit.status)]}
-                          onPress={() => console.log('Unit pressed:', unit.id)}
+                          // onPress={() => console.log('Unit pressed:', unit.id)}
+                          onPress={() => {
+                            // Only navigate if unit status is 'available'
+                            if (unit.status === 'available') {
+                              navigation.navigate('UnitDetails', {
+                                unitId: unit.id,
+                                unitNumber: unit.unitNumber,
+                                projectName: projectName,
+                                selectedUnitType: selectedUnitType,
+                                buildingName: currentBuilding.name,
+                                floor: unit.floor,
+                                status: unit.status,
+                              });
+                            } else {
+                              console.log('Unit pressed:', unit.id, '- Status:', unit.status);
+                            }
+                          }}
                         >
                           <Text style={styles.unitText}>{unit.unitNumber}</Text>
                         </TouchableOpacity>

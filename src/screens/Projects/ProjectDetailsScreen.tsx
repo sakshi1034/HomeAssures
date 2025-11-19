@@ -1,240 +1,369 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from "react";
 import {
+  SafeAreaView,
   View,
   Text,
   StyleSheet,
-  SafeAreaView,
-  ScrollView,
+  FlatList,
   TouchableOpacity,
-} from 'react-native';
-import { useNavigation, useRoute } from '@react-navigation/native';
-import { AppGradient, Navbar } from '../../components';
-import { getFontStyle } from '../../utils/fonts';
-import Icon from 'react-native-vector-icons/MaterialIcons';
-import { List } from 'react-native-paper';
+  TextInput,
+  Alert,
+} from "react-native";
+import { useNavigation, useRoute } from "@react-navigation/native";
+import Icon from "react-native-vector-icons/MaterialIcons";
 
-const renderAccordionRight = (expanded: boolean) => (_props: any) => (
-  <Icon name={expanded ? 'expand-more' : 'chevron-right'} size={22} color="#374151" />
-);
-import type { RootStackParamList } from '../../navigation/AppNavigator';
-import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import type { RouteProp } from '@react-navigation/native';
+import { AppGradient, Navbar } from "../../components";
+import { getFontStyle } from "../../utils/fonts";
 
-type ProjectDetailsNavProp = NativeStackNavigationProp<RootStackParamList, 'ProjectDetails'>;
-type ProjectDetailsRouteProp = RouteProp<RootStackParamList, 'ProjectDetails'>;
+import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import type { RouteProp } from "@react-navigation/native";
+import type { RootStackParamList } from "../../navigation/AppNavigator";
 
-const ProjectDetailsScreen: React.FC = () => {
-  const navigation = useNavigation<ProjectDetailsNavProp>();
-  const route = useRoute<ProjectDetailsRouteProp>();
-  const { project } = route.params;
-  const [expanded, setExpanded] = useState<Record<number, boolean>>({});
+/* ---------- types ---------- */
+type NavT = NativeStackNavigationProp<RootStackParamList, "Projects">;
+type RouteT = RouteProp<RootStackParamList, "Projects">;
+
+type Project = {
+  id: string | number;
+  projectName?: string;
+  city?: string;
+  state?: string;
+  reraNumber?: string;
+  phasesCount?: number;
+  // ...any other fields you pass to ProjectDetails
+};
+
+const AllProjectsScreen: React.FC = () => {
+  const navigation = useNavigation<NavT>();
+  const route = useRoute<RouteT>();
+  const rawProjects = (route.params as any)?.projects as Project[] | undefined;
+
+  const [query, setQuery] = useState("");
+
+  const projects = Array.isArray(rawProjects) ? rawProjects : [];
+
+  const filtered = useMemo(() => {
+    if (!query.trim()) return projects;
+    const q = query.toLowerCase();
+    return projects.filter((p) =>
+      (p.projectName || "").toLowerCase().includes(q)
+    );
+  }, [projects, query]);
 
   const handleBackPress = () => navigation.goBack();
   const handleNotificationPress = () => {};
   const handleProfilePress = () => {};
-  const handleEditPress = () => {
-    navigation.navigate('AddProject' as never);
+
+  const goToDetails = (item: Project) => {
+    // Navigate to your ProjectDetails screen with the whole object
+    navigation.navigate("ProjectDetails" as never, { project: item } as never);
   };
 
-  const details = [
-    { label: 'Address :', value: 'Dorem ipsum dolor sit amet, consectetur adipiscing elit.' },
-    { label: 'City :', value: 'Pune' },
-    { label: 'State :', value: 'Maharashtra' },
-    { label: 'Pincode :', value: '411000' },
-    { label: 'RERA Number :', value: '123455' },
-    { label: 'No. of Phases :', value: '4' },
-  ];
+  const goToEdit = (item?: Project) => {
+    // If you support editing an existing one:
+    navigation.navigate("AddProject" as never, item ? ({ project: item } as never) : (undefined as never));
+  };
 
-  const phases = [1, 2, 3, 4];
+  const confirmDelete = (item: Project) => {
+    Alert.alert(
+      "Delete Project",
+      `Are you sure you want to delete “${item.projectName || "Untitled"}”?`,
+      [
+        { text: "Cancel", style: "cancel" },
+        { text: "Delete", style: "destructive", onPress: () => {/* hook your delete API */} },
+      ]
+    );
+  };
+
+  const renderItem = ({ item }: { item: Project }) => {
+    const title = item.projectName || "Untitled Project";
+    const metaLeft = [item.city, item.state].filter(Boolean).join(", ");
+    const metaRight = item.reraNumber ? `RERA: ${item.reraNumber}` : undefined;
+
+    return (
+      <Touchable opacity={0.9} onPress={() => goToDetails(item)}>
+        <View style={styles.cardRow}>
+          <View style={styles.leftBlock}>
+            <Text style={styles.projectName} numberOfLines={1}>
+              {title}
+            </Text>
+
+            <View style={styles.metaRow}>
+              <View style={styles.metaBadge}>
+                <Icon name="location-on" size={14} color="#6B7280" />
+                <Text numberOfLines={1} style={styles.metaText}>
+                  {metaLeft || "—"}
+                </Text>
+              </View>
+
+              {!!metaRight && (
+                <View style={styles.metaBadge}>
+                  <Icon name="gavel" size={14} color="#6B7280" />
+                  <Text numberOfLines={1} style={styles.metaText}>
+                    {metaRight}
+                  </Text>
+                </View>
+              )}
+
+              {!!item.phasesCount && (
+                <View style={styles.metaBadge}>
+                  <Icon name="domain" size={14} color="#6B7280" />
+                  <Text numberOfLines={1} style={styles.metaText}>
+                    {item.phasesCount} Phases
+                  </Text>
+                </View>
+              )}
+            </View>
+          </View>
+
+          <View style={styles.actions}>
+            <TouchableOpacity
+              onPress={() => goToEdit(item)}
+              style={styles.iconBtn}
+              hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+            >
+              <Icon name="edit" size={20} color="#111827" />
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              onPress={() => confirmDelete(item)}
+              style={styles.iconBtn}
+              hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+            >
+              <Icon name="delete-outline" size={20} color="#B91C1C" />
+            </TouchableOpacity>
+
+            <Icon name="chevron-right" size={22} color="#9CA3AF" />
+          </View>
+        </View>
+      </Touchable>
+    );
+  };
+
+  const EmptyList = () => (
+    <View style={styles.emptyWrap}>
+      <Icon name="folder-open" size={42} color="#9CA3AF" />
+      <Text style={styles.emptyTitle}>No Projects</Text>
+      <Text style={styles.emptyText}>Tap the + button or Edit to add a project.</Text>
+    </View>
+  );
 
   return (
     <SafeAreaView style={styles.container}>
       <AppGradient style={styles.gradient}>
         <Navbar
-          showBackButton={true}
-          showProfile={true}
-          title={`${project.projectName} Details`}
+          showBackButton
+          showProfile
+          title="All Projects"
           onBackPress={handleBackPress}
           onNotificationPress={handleNotificationPress}
           onProfilePress={handleProfilePress}
-          showEditButton={true}
-          onEditPress={handleEditPress}
         />
 
-        <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
-          {/* Title moved into Navbar */}
-
-          {/* Details */}
-          <View style={styles.detailsSection}>
-            {details.map((row, idx) => (
-              <View key={idx} style={styles.detailRow}>
-                <Text style={styles.detailLabel}>{row.label}</Text>
-                <Text style={styles.detailValue}>{row.value}</Text>
-              </View>
-            ))}
+        {/* Top tools: count + search */}
+        <View style={styles.toolsBar}>
+          <View style={styles.countPill}>
+            <Text style={styles.countText}>{filtered.length}</Text>
+            <Text style={styles.countLabel}>Projects</Text>
           </View>
 
-          {/* Phase accordions */}
-          <View style={styles.phaseList}>
-            {phases.map((p) => {
-              const isExpanded = !!expanded[p];
-              return (
-                <List.Accordion
-                  key={p}
-                  title={`Phase ${p} - Name`}
-                  titleStyle={styles.phaseText}
-                  expanded={isExpanded}
-                  onPress={() => setExpanded(prev => ({ ...prev, [p]: !prev[p] }))}
-                  style={[styles.accordionContainer, isExpanded && styles.accordionExpanded]}
-                  right={renderAccordionRight(isExpanded)}
-                >
-                  <View style={styles.phaseDetailsWrapper}>
-                    {[1,2,3,4].map((i) => (
-                      <View key={i} style={styles.buildingRow}>
-                        <Text style={styles.buildingLabel}>{`Building ${i} :`}</Text>
-                        <Text style={styles.buildingValue}>Dorem ipsum</Text>
-                      </View>
-                    ))}
-                  </View>
-                </List.Accordion>
-              );
-            })}
+          <View style={styles.searchWrap}>
+            <Icon name="search" size={18} color="#6B7280" />
+            <TextInput
+              value={query}
+              onChangeText={setQuery}
+              placeholder="Search project"
+              placeholderTextColor="#9CA3AF"
+              style={styles.searchInput}
+              autoCorrect={false}
+            />
+            {!!query && (
+              <TouchableOpacity onPress={() => setQuery("")} style={styles.clearBtn}>
+                <Icon name="close" size={16} color="#6B7280" />
+              </TouchableOpacity>
+            )}
           </View>
+        </View>
 
-          {/* Save Changes Button */}
-          <TouchableOpacity style={styles.saveButton}>
-            <Text style={styles.saveButtonText}>Save Changes</Text>
-          </TouchableOpacity>
-        </ScrollView>
+        <FlatList
+          contentContainerStyle={styles.list}
+          data={filtered}
+          keyExtractor={(item) => String(item.id)}
+          renderItem={renderItem}
+          ItemSeparatorComponent={() => <View style={styles.separator} />}
+          ListEmptyComponent={EmptyList}
+        />
+
+        {/* Optional FAB for quick add */}
+        <TouchableOpacity
+          style={styles.fab}
+          activeOpacity={0.9}
+          onPress={() => goToEdit(undefined)}
+        >
+          <Icon name="add" size={26} color="#ffffff" />
+        </TouchableOpacity>
       </AppGradient>
     </SafeAreaView>
   );
 };
 
+/* tiny wrapper to keep TouchableOpacity readable */
+const Touchable: React.FC<{ onPress: () => void; opacity?: number; children: React.ReactNode }> = ({
+  onPress,
+  opacity = 0.8,
+  children,
+}) => (
+  <TouchableOpacity activeOpacity={opacity} onPress={onPress}>
+    {children}
+  </TouchableOpacity>
+);
+
+export default AllProjectsScreen;
+
+/* ---------- styles ---------- */
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  gradient: {
-    flex: 1,
-  },
-  scroll: {
+  container: { flex: 1 },
+  gradient: { flex: 1 },
+
+  toolsBar: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
     paddingHorizontal: 12,
-    paddingBottom: 24,
+    paddingBottom: 6,
+    paddingTop: 4,
   },
-  editButton: {
-    alignSelf: 'flex-end',
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    backgroundColor: '#FFFFFF',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 12,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 6,
-    elevation: 2,
+
+  countPill: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#EAF4FF",
+    borderWidth: 1,
+    borderColor: "#DCEBFF",
+    borderRadius: 999,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    gap: 6,
   },
-  detailsSection: {
-    marginBottom: 16,
+  countText: {
+    fontSize: 14,
+    color: "#111827",
+    ...getFontStyle("semiBold"),
   },
-  
-  detailRow: {
-    flexDirection: 'row',
-    marginBottom: 16,
+  countLabel: {
+    fontSize: 13,
+    color: "#6B7280",
+    ...getFontStyle("medium"),
   },
-  detailLabel: {
-    width: 130,
-    color: '#111827',
-    fontSize: 18,
-    ...getFontStyle('semiBold'),
-  },
-  detailValue: {
+
+  searchWrap: {
     flex: 1,
-    color: '#374151',
-    fontSize: 18,
-    lineHeight: 26,
-    ...getFontStyle('regular'),
-  },
-  phaseList: {
-    gap: 12,
-    marginTop: 8,
-    marginBottom: 24,
-  },
-  accordionContainer: {
-    borderRadius: 12,
-    backgroundColor: '#EAF4FF',
+    height: 40,
+    backgroundColor: "#FFFFFF",
     borderWidth: 1,
-    borderColor: '#DCEBFF',
-    overflow: 'hidden',
-  },
-  accordionExpanded: {
-    backgroundColor: '#FFFFFF',
-  },
-  phaseDetailsWrapper: {
-    backgroundColor: '#FFFFFF',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    borderBottomLeftRadius: 12,
-    borderBottomRightRadius: 12,
-  },
-  buildingRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingVertical: 10,
-  },
-  buildingLabel: {
-    fontSize: 20,
-    color: '#1F2937',
-    ...getFontStyle('semiBold'),
-  },
-  buildingValue: {
-    fontSize: 18,
-    color: '#374151',
-    ...getFontStyle('regular'),
-  },
-  phaseItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 16,
-    height: 64,
+    borderColor: "#E5E7EB",
     borderRadius: 12,
-    backgroundColor: '#EAF4FF',
-    borderWidth: 1,
-    borderColor: '#DCEBFF',
+    paddingHorizontal: 10,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
   },
-  phaseText: {
-    fontSize: 22,
-    color: '#111827',
-    ...getFontStyle('semiBold'),
+  searchInput: {
+    flex: 1,
+    fontSize: 14,
+    color: "#111827",
+    ...getFontStyle("regular"),
   },
-  phaseMuted: {
-    color: '#6B7280',
-    ...getFontStyle('medium'),
-  },
-  saveButton: {
-    height: 56,
+  clearBtn: { padding: 4 },
+
+  list: { paddingHorizontal: 12, paddingBottom: 24, paddingTop: 6 },
+
+  cardRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 14,
+    paddingVertical: 14,
+    backgroundColor: "#FFFFFF",
     borderRadius: 14,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#6366F1',
-    shadowColor: '#6366F1',
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.25,
-    shadowRadius: 8,
-    elevation: 6,
+    borderWidth: 1,
+    borderColor: "#E5E7EB",
+    shadowColor: "#111827",
+    shadowOpacity: 0.04,
+    shadowRadius: 6,
+    shadowOffset: { width: 0, height: 2 },
+    elevation: 1,
   },
-  saveButtonText: {
-    color: '#FFFFFF',
+
+  leftBlock: { flex: 1, marginRight: 8 },
+
+  projectName: {
     fontSize: 18,
-    ...getFontStyle('semiBold'),
+    color: "#111827",
+    marginBottom: 6,
+    ...getFontStyle("semiBold"),
+  },
+
+  metaRow: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 8,
+  },
+  metaBadge: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    backgroundColor: "#F3F4F6",
+    borderRadius: 999,
+  },
+  metaText: {
+    fontSize: 12,
+    color: "#6B7280",
+    ...getFontStyle("medium"),
+    maxWidth: 160,
+  },
+
+  actions: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    marginLeft: 6,
+  },
+  iconBtn: { padding: 6 },
+
+  separator: { height: 10 },
+
+  emptyWrap: {
+    alignItems: "center",
+    paddingVertical: 32,
+    gap: 8,
+  },
+  emptyTitle: {
+    fontSize: 18,
+    color: "#111827",
+    ...getFontStyle("semiBold"),
+  },
+  emptyText: {
+    fontSize: 14,
+    color: "#6B7280",
+    ...getFontStyle("regular"),
+  },
+
+  fab: {
+    position: "absolute",
+    right: 16,
+    bottom: 24,
+    width: 54,
+    height: 54,
+    borderRadius: 27,
+    backgroundColor: "#6366F1",
+    justifyContent: "center",
+    alignItems: "center",
+    shadowColor: "#6366F1",
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.3,
+    shadowRadius: 10,
+    elevation: 8,
   },
 });
-
-export default ProjectDetailsScreen;
-
-
