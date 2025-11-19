@@ -1,10 +1,15 @@
 import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import RMHomeScreen from '../screens/rm/RMHomeScreen';
+import CallStatusScreen from '../screens/rm/CallStatusScreen';
 
 export type RMStackParamList = {
   RMHomeMain: undefined;
-  // Add more RM screens here as needed
+  CallStatus: {
+    contactName: string;
+    time: string;
+    duration: string;
+  };
 };
 
 const Stack = createNativeStackNavigator<RMStackParamList>();
@@ -17,6 +22,7 @@ const RMStack: React.FC = () => {
       }}
     >
       <Stack.Screen name="RMHomeMain" component={RMHomeScreen} />
+      <Stack.Screen name="CallStatus" component={CallStatusScreen} />
     </Stack.Navigator>
   );
 };

@@ -10,9 +10,12 @@ import {
   Dimensions,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { VectorIcon, AppGradient } from '../../components';
 import { getFontStyle } from '../../utils/fonts';
 import DrawerMenu from '../../components/DrawerMenu';
+import type { RMStackParamList } from '../../navigation/RMStack';
 
 const { width } = Dimensions.get('window');
 
@@ -25,8 +28,11 @@ interface HistoryItem {
   participants?: number;
 }
 
+type RMHomeNavigationProp = NativeStackNavigationProp<RMStackParamList>;
+
 const RMHomeScreen: React.FC = () => {
   const [drawerVisible, setDrawerVisible] = useState(false);
+  const navigation = useNavigation<RMHomeNavigationProp>();
 
   const upcomingEvent = {
     name: 'Alia Bhatt',
@@ -71,6 +77,14 @@ const RMHomeScreen: React.FC = () => {
 
   const totalTodayTime = '3 hr';
   const totalYesterdayTime = '3 hrs 30 min';
+
+  const handleHistoryPress = (item: HistoryItem) => {
+    navigation.navigate('CallStatus', {
+      contactName: item.name,
+      time: item.time,
+      duration: item.duration,
+    });
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -153,7 +167,12 @@ const RMHomeScreen: React.FC = () => {
               <Text style={styles.historyTotalTime}>{totalTodayTime}</Text>
             </View>
             {todayHistory.map((item) => (
-              <TouchableOpacity key={item.id} style={styles.historyItem}>
+              <TouchableOpacity
+                key={item.id}
+                style={styles.historyItem}
+                onPress={() => handleHistoryPress(item)}
+                activeOpacity={0.85}
+              >
                 <View
                   style={[
                     styles.historyIconContainer,
@@ -184,7 +203,7 @@ const RMHomeScreen: React.FC = () => {
                 <VectorIcon
                   type="MaterialIcons"
                   name="chevron-right"
-                  size={20}
+                  size={24}
                   color="#9CA3AF"
                 />
               </TouchableOpacity>
@@ -198,7 +217,12 @@ const RMHomeScreen: React.FC = () => {
               <Text style={styles.historyTotalTime}>{totalYesterdayTime}</Text>
             </View>
             {yesterdayHistory.map((item) => (
-              <TouchableOpacity key={item.id} style={styles.historyItem}>
+              <TouchableOpacity
+                key={item.id}
+                style={styles.historyItem}
+                onPress={() => handleHistoryPress(item)}
+                activeOpacity={0.85}
+              >
                 <View
                   style={[
                     styles.historyIconContainer,
@@ -229,7 +253,7 @@ const RMHomeScreen: React.FC = () => {
                 <VectorIcon
                   type="MaterialIcons"
                   name="chevron-right"
-                  size={20}
+                  size={24}
                   color="#9CA3AF"
                 />
               </TouchableOpacity>
@@ -305,12 +329,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#F3F4F6',
     borderRadius: 12,
-    padding: 16,
+    padding: 4,
     marginBottom: 20,
   },
   upcomingIconContainer: {
-    width: 40,
-    height: 40,
+    width: 20,
+    height: 20,
     borderRadius: 20,
     backgroundColor: '#E0F2FE',
     justifyContent: 'center',
@@ -321,12 +345,12 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   upcomingName: {
-    fontSize: 16,
+    fontSize: 12,
     color: '#1F2937',
     ...getFontStyle('semiBold'),
   },
   upcomingTime: {
-    fontSize: 14,
+    fontSize: 12,
     color: '#6B7280',
     marginTop: 2,
     ...getFontStyle('regular'),

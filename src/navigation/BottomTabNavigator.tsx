@@ -7,7 +7,7 @@ import TeamStack from './TeamStack';
 import InventoryStack from './InventoryStack';
 import ReportsStack from './ReportsStack';
 import RMStack from './RMStack';
-// import ProfileStack from './ProfileStack';
+import ProfileStack from './ProfileStack';
 
 export type BottomTabParamList = {
   Home: undefined;
@@ -19,7 +19,7 @@ export type BottomTabParamList = {
   RMHome: undefined;
   Teams: undefined;
   Projects: undefined;
-  Analytics: undefined;
+  RMProfile: undefined;
 };
 
 const Tab = createBottomTabNavigator<BottomTabParamList>();
@@ -50,8 +50,9 @@ const getTabBarIcon = ({ route, focused, color, size, role }: {
       case 'Reports':
         iconName = 'description';
         break;
-      case 'Analytics':
-        iconName = 'bar-chart';
+      case 'RMProfile':
+        iconName = focused ? 'person' : 'person-outline';
+        iconType = 'Ionicons';
         break;
       default:
         iconName = 'home';
@@ -73,10 +74,10 @@ const getTabBarIcon = ({ route, focused, color, size, role }: {
         iconName = focused ? 'bar-chart' : 'bar-chart-outline';
         iconType = 'Ionicons';
         break;
-      // case 'Profile':
-      //   iconName = focused ? 'person' : 'person-outline';
-      //   iconType = 'Ionicons';
-      //   break;
+      case 'Profile':
+        iconName = focused ? 'person' : 'person-outline';
+        iconType = 'Ionicons';
+        break;
       default:
         iconName = 'home';
     }
@@ -160,10 +161,10 @@ const BottomTabNavigator: React.FC = () => {
             }}
           />
           <Tab.Screen 
-            name="Analytics" 
-            component={ReportsStack}
+            name="RMProfile" 
+            component={ProfileStack}
             options={{
-              tabBarLabel: 'Analytics',
+              tabBarLabel: 'Profile',
             }}
           />
         </>

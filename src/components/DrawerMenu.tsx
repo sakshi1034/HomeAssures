@@ -9,6 +9,7 @@ import {
   Dimensions,
   Image,
 } from 'react-native';
+import LinearGradient from 'react-native-linear-gradient';
 import { VectorIcon } from './index';
 import { getFontStyle } from '../utils/fonts';
 
@@ -37,15 +38,14 @@ const DrawerMenu: React.FC<DrawerMenuProps> = ({ visible, onClose, userName }) =
         useNativeDriver: true,
       }).start();
     }
-  }, [visible]);
+  }, [visible, slideAnim]);
 
   const menuItems = [
-    { icon: 'home', label: 'Home', onPress: () => {} },
-    { icon: 'person', label: 'Profile', onPress: () => {} },
-    { icon: 'settings', label: 'Settings', onPress: () => {} },
-    { icon: 'help', label: 'Help & Support', onPress: () => {} },
-    { icon: 'logout', label: 'Logout', onPress: () => {} },
-  ];
+    { icon: 'id-card-o', iconType: 'FontAwesome', label: 'Virtual Business Card' },
+    { icon: 'calendar', iconType: 'FontAwesome', label: 'My Schedule' },
+    { icon: 'sticky-note-o', iconType: 'FontAwesome', label: 'My Notes' },
+    { icon: 'line-chart', iconType: 'FontAwesome', label: 'Leaderboard' },
+  ] as const;
 
   return (
     <Modal
@@ -68,49 +68,55 @@ const DrawerMenu: React.FC<DrawerMenuProps> = ({ visible, onClose, userName }) =
             },
           ]}
         >
-          <View style={styles.drawerHeader}>
-            <View style={styles.profileSection}>
-              <Image
-                source={{
-                  uri: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop',
-                }}
-                style={styles.profileImage}
-              />
-              <View style={styles.profileInfo}>
-                <Text style={styles.profileName}>{userName}</Text>
-                <Text style={styles.profileEmail}>Prakash@example.com</Text>
-              </View>
+          <View style={styles.logoRow}>
+            <Image
+              source={require('../assets/images/HALogo.png')}
+              style={styles.logo}
+              resizeMode="contain"
+            />
+          </View>
+
+          <View style={styles.userSection}>
+            <View>
+              <Text style={styles.userLabel}>Welcome back</Text>
+              <Text style={styles.userName}>{userName}</Text>
             </View>
             <TouchableOpacity style={styles.closeButton} onPress={onClose}>
               <VectorIcon
                 type="MaterialIcons"
                 name="close"
                 size={24}
-                color="#1F2937"
+                color="#0F172A"
               />
             </TouchableOpacity>
           </View>
 
           <View style={styles.menuItems}>
-            {menuItems.map((item, index) => (
-              <TouchableOpacity
-                key={index}
-                style={styles.menuItem}
-                onPress={() => {
-                  item.onPress();
-                  onClose();
-                }}
-              >
-                <VectorIcon
-                  type="MaterialIcons"
-                  name={item.icon}
-                  size={24}
-                  color="#1F2937"
-                />
-                <Text style={styles.menuItemLabel}>{item.label}</Text>
+            {menuItems.map((item) => (
+              <TouchableOpacity key={item.label} style={styles.menuItem}>
+                <View style={styles.iconWrapper}>
+                  <VectorIcon
+                    type={item.iconType}
+                    name={item.icon}
+                    size={20}
+                    color="#0F172A"
+                  />
+                </View>
+                <Text style={styles.menuLabel}>{item.label}</Text>
               </TouchableOpacity>
             ))}
           </View>
+
+          <TouchableOpacity style={styles.logoutButton}>
+            <LinearGradient
+              colors={['#3DB7FF', '#7C3AED']}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={styles.logoutGradient}
+            >
+              <Text style={styles.logoutText}>Logout</Text>
+            </LinearGradient>
+          </TouchableOpacity>
         </Animated.View>
       </View>
     </Modal>
@@ -127,66 +133,78 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   drawer: {
-    width: width * 0.8,
+    width: width * 0.74,
     backgroundColor: '#FFFFFF',
     height: '100%',
+    borderTopRightRadius: 32,
+    borderBottomRightRadius: 32,
+    paddingHorizontal: 24,
+    paddingTop: 40,
+    paddingBottom: 32,
   },
-  drawerHeader: {
-    paddingTop: 60,
-    paddingHorizontal: 20,
-    paddingBottom: 20,
-    borderBottomWidth: 1,
-    borderBottomColor: '#E5E7EB',
+  logoRow: {
+    alignItems: 'flex-end',
   },
-  profileSection: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 16,
+  logo: {
+    width: 48,
+    height: 48,
   },
-  profileImage: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    marginRight: 12,
+  userSection: {
+    marginTop: 40,
+    marginBottom: 48,
   },
-  profileInfo: {
-    flex: 1,
-  },
-  profileName: {
-    fontSize: 18,
-    color: '#1F2937',
-    marginBottom: 4,
-    ...getFontStyle('semiBold'),
-  },
-  profileEmail: {
+  userLabel: {
     fontSize: 14,
-    color: '#6B7280',
-    ...getFontStyle('regular'),
+    color: '#94A3B8',
+    marginBottom: 4,
+    ...getFontStyle('medium'),
+  },
+  userName: {
+    fontSize: 24,
+    color: '#0F172A',
+    ...getFontStyle('semiBold'),
   },
   closeButton: {
     position: 'absolute',
-    top: 60,
-    right: 20,
-    padding: 8,
+    top: 0,
+    right: 0,
+    padding: 4,
   },
   menuItems: {
-    paddingTop: 20,
+    gap: 28,
   },
   menuItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 20,
-    paddingVertical: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: '#F3F4F6',
   },
-  menuItemLabel: {
-    fontSize: 16,
-    color: '#1F2937',
-    marginLeft: 16,
+  iconWrapper: {
+    width: 36,
+    height: 36,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 16,
+  },
+  menuLabel: {
+    fontSize: 18,
+    color: '#0F172A',
     ...getFontStyle('medium'),
+  },
+  logoutButton: {
+    marginTop: 'auto',
+  },
+  logoutGradient: {
+    borderRadius: 24,
+    paddingVertical: 16,
+    alignItems: 'center',
+  },
+  logoutText: {
+    fontSize: 16,
+    color: '#FFFFFF',
+    ...getFontStyle('semiBold'),
   },
 });
 
 export default DrawerMenu;
-
