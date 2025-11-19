@@ -25,14 +25,14 @@ const AppNavigator: React.FC = () => {
         }}
       >
         {/* Auth Screens */}
-        <Stack.Screen name="Login" component={LoginScreen} />
-        <Stack.Screen name="SignUp" component={SignUpScreen} />
-        <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
+        <Stack.Screen name="Login" component={LoginScreen}/>
+        <Stack.Screen name="SignUp" component={SignUpScreen}/>
+        <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen}/>
         <Stack.Screen name="OTP" component={OTPScreen} />
-        <Stack.Screen name="NewPassword" component={NewPasswordScreen} />
+        <Stack.Screen name="NewPassword" component={NewPasswordScreen}/>
         
         {/* Main App with Bottom Tabs */}
-        <Stack.Screen name="MainApp" component={BottomTabNavigator} />
+        <Stack.Screen name="MainApp" component={BottomTabNavigator}/>
       </Stack.Navigator>
     </NavigationContainer>
   );
