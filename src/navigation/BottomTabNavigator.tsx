@@ -9,6 +9,7 @@ import ReportsStack from './ReportsStack';
 import RMStack from './RMStack';
 import ProfileStack from './ProfileStack';
 
+
 export type BottomTabParamList = {
   Home: undefined;
   Clients: undefined;
@@ -17,9 +18,11 @@ export type BottomTabParamList = {
   Profile: undefined;
   // RM Tabs
   RMHome: undefined;
+  BookingsScreen: undefined;
   Teams: undefined;
   Projects: undefined;
   RMProfile: undefined;
+
 };
 
 const Tab = createBottomTabNavigator<BottomTabParamList>();
@@ -47,11 +50,11 @@ const getTabBarIcon = ({ route, focused, color, size, role }: {
       case 'Projects':
         iconName = 'business';
         break;
-      case 'Reports':
-        iconName = 'description';
+      case 'BookingsScreen':
+        iconName = 'book-online';
         break;
-      case 'RMProfile':
-        iconName = focused ? 'person' : 'person-outline';
+      case 'Reports':
+        iconName = focused ? 'bar-chart' : 'bar-chart-outline';
         iconType = 'Ionicons';
         break;
       default:
@@ -154,17 +157,18 @@ const BottomTabNavigator: React.FC = () => {
             }}
           />
           <Tab.Screen 
+            name="BookingsScreen" 
+            component={RMStack}
+            initialParams={{ initialRouteName: 'BookingsScreen' } as any}
+            options={{
+              tabBarLabel: 'Booking',
+            }}
+          />
+          <Tab.Screen 
             name="Reports" 
             component={ReportsStack}
             options={{
               tabBarLabel: 'Reports',
-            }}
-          />
-          <Tab.Screen 
-            name="RMProfile" 
-            component={ProfileStack}
-            options={{
-              tabBarLabel: 'Profile',
             }}
           />
         </>
